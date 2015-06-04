@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+
+NAME=the-tiniest-service
+
+trap 'CODE=$?; if [[ -n "$CONTAINER" ]]; then docker stop "$CONTAINER"; fi; exit $CODE' 0
+
+docker build --tag="$NAME" .
+CONTAINER="$(docker run -d -P "$NAME")"
+HOST="$(gsed -r 's#tcp://([^:]+).*#\1#' <<< "${DOCKER_HOST:-localhost}")"
+PORT="$(docker port "$CONTAINER" 8080 | gsed -r 's/.+://')"
+sleep 35
+curl --fail "$HOST:$PORT"
