@@ -7,9 +7,20 @@ NAME=the-tiniest-service
 
 trap 'CODE=$?; if [[ -n "$CONTAINER" ]]; then docker stop "$CONTAINER"; fi; exit $CODE' 0
 
+# 1. Build the image
 docker build --tag="$NAME" .
+
+# 2. Start up the container, record the container ID
 CONTAINER="$(docker run -d -P "$NAME")"
+
+# 3. Determine the docker host address
 HOST="$(gsed -r 's#tcp://([^:]+).*#\1#' <<< "${DOCKER_HOST:-localhost}")"
+
+# 4. Determine the port of the container started in step 2
 PORT="$(docker port "$CONTAINER" 8080 | gsed -r 's/.+://')"
+
+# 5. Wait for the server to start
 sleep 35
+
+# 6. Ensure the container is available
 curl --fail "$HOST:$PORT"
