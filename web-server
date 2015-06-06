@@ -2,6 +2,12 @@
 
 output='{ "message": "Hello, world!" }'
 
+echo >&2 'Super-complex enterprise server application initialising...'
+sleep 15
+echo >&2 'Still going...'
+sleep 15
+echo >&2 'Server initialised.'
+
 while true; do
     echo -e "HTTP/1.1 200 OK\\r\\n\\r\\n$output" | nc -l -p 8080
 done
