@@ -8,12 +8,12 @@ NAME=the-tiniest-service
 # If you're on Mac OS X, you'll need to `brew install coreutils` for sed to work correctly.
 SED=$(which gsed || echo 'sed')
 
-trap 'CODE=$?; if [[ -n "$CONTAINER" ]]; then docker stop "$CONTAINER"; fi; exit $CODE' 0
+trap 'CODE=$?; if [[ -n "$CONTAINER" ]]; then docker stop "$CONTAINER"; docker rm "$CONTAINER"; fi; exit $CODE' 0
 
 # 1. Build the image
 docker build --tag="$NAME" .
 
-# 2. Start up the container, record the container ID
+# 2. Start up the container and record the container ID
 CONTAINER="$(docker run -d -P "$NAME")"
 
 # 3. Determine the docker host address
