@@ -1,7 +1,11 @@
 #!/bin/sh
 
-output='{ "message": "Hello, world!" }'
+output='HTTP/1.1 200 OK\r
+Content-Type: application/json\r
+\r
+{ "message": "Hello, world!" }\r
+'
 
 while true; do
-    echo -e "HTTP/1.1 200 OK\\r\\n\\r\\n$output" | nc -l -p 8080
+    echo -e "$output" | nc -l -p 8080
 done
