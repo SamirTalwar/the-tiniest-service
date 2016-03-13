@@ -23,7 +23,7 @@ HOST="$($SED -r 's#tcp://([^:]+).*#\1#' <<< "${DOCKER_HOST:-localhost}")"
 PORT="$(docker port "$CONTAINER" 8080 | $SED -r 's/.+://')"
 
 # 5. Wait for the server to start
-sleep 35
+sleep 5
 
 # 6. Ensure the container is available
 curl --fail "$HOST:$PORT"
