@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-NAME=the-tiniest-service
+NAME=samirtalwar/the-tiniest-service
 
 # If you're on Mac OS X, you'll need to `brew install coreutils` for sed to work correctly.
 SED=$(which gsed || echo 'sed')
