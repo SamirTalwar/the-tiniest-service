@@ -1,5 +1,7 @@
 #!/bin/sh
 
+PORT="${PORT:-80}"
+
 output='HTTP/1.1 200 OK\r
 Content-Type: application/json\r
 \r
@@ -7,5 +9,5 @@ Content-Type: application/json\r
 '
 
 while true; do
-    echo -e "$output" | nc -l -p 8080
+    echo -e "$output" | nc -l -p "$PORT"
 done

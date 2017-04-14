@@ -3,7 +3,8 @@
 set -e
 set -o pipefail
 
-NAME=samirtalwar/the-tiniest-service
+IMAGE_NAME=samirtalwar/the-tiniest-service
+export CONTAINER_PORT=80
 
 # If you're on Mac OS X, you'll need to `brew install coreutils` for sed to work correctly.
 SED=$(which gsed || echo 'sed')
@@ -11,19 +12,19 @@ SED=$(which gsed || echo 'sed')
 trap 'CODE=$?; if [[ -n "$CONTAINER" ]]; then docker stop "$CONTAINER"; docker rm "$CONTAINER"; fi; exit $CODE' 0
 
 # 1. Build the image
-docker build --tag="$NAME" .
+docker build --tag="$IMAGE_NAME" .
 
 # 2. Start up the container and record the container ID
-CONTAINER="$(docker run -d -P "$NAME")"
+CONTAINER_ID="$(docker run --detach --publish="$CONTAINER_PORT" "$IMAGE_NAME")"
 
 # 3. Determine the docker host address
 HOST="$($SED -r 's#tcp://([^:]+).*#\1#' <<< "${DOCKER_HOST:-localhost}")"
 
 # 4. Determine the port of the container started in step 2
-PORT="$(docker port "$CONTAINER" 8080 | $SED -r 's/.+://')"
+HOST_PORT="$(docker port "$CONTAINER_ID" "$CONTAINER_PORT" | $SED -r 's/.+://')"
 
 # 5. Wait for the server to start
 sleep 5
 
 # 6. Ensure the container is available
-curl --fail "$HOST:$PORT"
+curl --fail "$HOST:$HOST_PORT"
